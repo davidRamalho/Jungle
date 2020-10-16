@@ -1,16 +1,8 @@
 class Admin::CategoriesController < ApplicationController
 
   def index
-    @categories = Category.order(id: :desc).all
-    @categoryId = []
-    @categories.each do |id|
-      @categoryId.push(id[:id].to_i)
-    end
-    @categoryId.each do |id|
-      @productsWithCategory = Product.where("category_id = #{id}")
-      @productCount = @productsWithCategory.count
-    end
-    
+    #selects for all Categories and sorts by Quantity of Products belonging to that Category
+    @categories = Category.joins('LEFT JOIN products on categories.id = products.category_id').group(:id).order('COUNT(products.quantity) DESC')
     @count = Category.count
   end
 
@@ -29,12 +21,12 @@ class Admin::CategoriesController < ApplicationController
   end
 
   private
-
-  def category_params
-    params.require(:category).permit(
-      :id, 
-      :name
-    )
-  end
+  # NOT IN USE AT THIS TIME
+  # def category_params
+  #   params.require(:category).permit(
+  #     :id, 
+  #     :name
+  #   )
+  # end
 
 end
